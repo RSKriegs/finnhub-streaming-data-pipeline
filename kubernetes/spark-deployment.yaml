@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert
+    kompose.version: 1.27.0 (b0ed6a2c9)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: spark-master
+  name: spark-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: spark-master
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert
+        kompose.version: 1.27.0 (b0ed6a2c9)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/pipeline-network: "true"
+        io.kompose.service: spark-master
+    spec:
+      containers:
+        - env:
+            - name: INIT_DAEMON_STEP
+              value: setup_spark
+            - name: SPARK_PUBLIC_DNS
+              value: localhost
+          image: docker.io/library/finnhub-streaming-data-pipeline-spark-master:latest
+          imagePullPolicy: Never
+          name: spark-master
+          ports:
+            - containerPort: 8080
+            - containerPort: 7077
+          resources: {}
+        - env:
+            - name: SPARK_MASTER
+              value: spark://spark-master:7077
+            - name: SPARK_PUBLIC_DNS
+              value: localhost
+          image: docker.io/library/finnhub-streaming-data-pipeline-spark-worker-1:latest
+          imagePullPolicy: Never
+          name: spark-worker-1
+          ports:
+            - containerPort: 8081
+          resources: {}
+        - env:
+            - name: SPARK_MASTER
+              value: spark://spark-master:7077
+            - name: SPARK_PUBLIC_DNS
+              value: localhost
+          image: docker.io/library/finnhub-streaming-data-pipeline-spark-worker-2:latest
+          imagePullPolicy: Never
+          name: spark-worker-2
+          ports:
+            - containerPort: 8082
+          resources: {}
+      restartPolicy: Always
+status: {}

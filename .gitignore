@@ -9,4 +9,4 @@ FinnhubProducer/utils/__pycache__
 FinnhubProducer/src/__pycache__
 FinnhubProducer/src/utils/__pycache__
 StreamProcessor/spark/target/dependency
-kubernetes/
+unneeded/
