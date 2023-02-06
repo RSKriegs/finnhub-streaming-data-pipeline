@@ -21,6 +21,7 @@ spec:
         kompose.version: 1.27.0 (b0ed6a2c9)
       creationTimestamp: null
       labels:
+        io.kompose.network/pipeline-network: "true"
         io.kompose.service: finnhubproducer
     spec:
       containers:
