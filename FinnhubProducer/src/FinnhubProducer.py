@@ -9,8 +9,9 @@ class FinnhubProducer:
     def __init__(self):
         
         self.config = load_config('config.json')
+        print(f'config: {self.config}')
         self.finnhub_client = load_client(self.config['FINNHUB_API_TOKEN'])
-        self.producer = load_producer(self.config['KAFKA_SERVER'])
+        self.producer = load_producer(self.config['KAFKA_K8S_SERVER']) #change into ['KAFKA_SERVER'] for docker/docker-compose
         self.avro_schema = load_avro_schema('schemas/trades.avsc')
         self.validate = self.config['FINNHUB_VALIDATE_TICKERS']
 

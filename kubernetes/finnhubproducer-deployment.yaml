@@ -21,15 +21,14 @@ spec:
         kompose.version: 1.27.0 (b0ed6a2c9)
       creationTimestamp: null
       labels:
-        io.kompose.network/pipeline-network: "true"
         io.kompose.service: finnhubproducer
     spec:
       containers:
         - env:
             - name: KAFKA_PORT
-              value: "29092"
+              value: "9092"
             - name: KAFKA_SERVER
-              value: kafka
+              value: kafka-service.default.svc.cluster.local
             - name: KAFKA_TOPIC_NAME
               value: market
           image: docker.io/library/finnhub-streaming-data-pipeline-finnhubproducer:latest
@@ -53,6 +52,7 @@ metadata:
     io.kompose.service: finnhubproducer
   name: finnhubproducer
 spec:
+  clusterIP: None
   ports:
     - name: "8001"
       port: 8001
