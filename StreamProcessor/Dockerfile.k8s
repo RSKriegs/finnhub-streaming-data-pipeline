@@ -1,0 +1,7 @@
+FROM gcr.io/spark-operator/spark:v3.0.0
+
+WORKDIR /opt/spark/jars
+
+COPY spark/target/dependency/ .
+
+

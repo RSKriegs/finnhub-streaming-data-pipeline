@@ -57,6 +57,12 @@ services:
     environment:
       KAFKA_BROKERCONNECT: kafka:29092
 
+  spark-k8s:
+    build:
+      context: ./StreamProcessor
+      dockerfile: Dockerfile.k8s
+    container_name: spark-k8s
+
   spark-master:
     build:
       context: ./StreamProcessor/spark

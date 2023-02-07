@@ -1,0 +1,39 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: StreamProcessor
+  namespace: default
+spec:
+  type: Scala
+  mode: cluster
+  image: docker.io/library/finnhub-streaming-data-pipeline-spark-k8s:latest
+  imagePullPolicy: IfNotPresent
+  mainClass:
+  mainApplicationFile:
+  sparkVersion: "3.0.0"
+  restartPolicy:
+    type: OnFailure
+  volumes:
+    - name: "host-volume"
+      hostPath:
+        path: "/host"
+  driver:
+    cores: 1
+    memory: "1024m"
+    labels:
+      version: 3.0.0
+    serviceAccount: spark
+    volumeMounts:
+      - name: "host-volume"
+        mountPath: "/host"
+    javaOptions: "-Dconfig.resource=prod.conf"
+  executor:
+    cores: 2
+    instances: 1
+    memory: "1024m"
+    labels:
+      version: 3.0.0
+    volumeMounts:
+      - name: "host-volume"
+        mountPath: "/host"
+
