@@ -39,7 +39,7 @@ spec:
                   key: FINNHUB_API_TOKEN
                   optional: false
             - name: FINNHUB_STOCKS_TICKERS
-              value: "['BINANCE:BTCUSDT','BINANCE:ETHUSDT','BINANCE:XRPUSDT','BINANCE:DOGEUSDT']"
+              value: "BINANCE:BTCUSDT,BINANCE:ETHUSDT,BINANCE:XRPUSDT,BINANCE:DOGEUSDT"
             - name: FINNHUB_VALIDATE_TICKERS
               value: "1"
           image: docker.io/library/finnhub-streaming-data-pipeline-finnhubproducer:latest

@@ -10,3 +10,4 @@ FinnhubProducer/src/__pycache__
 FinnhubProducer/src/utils/__pycache__
 StreamProcessor/spark/target/dependency
 unneeded/
+kubernetes/secrets.yaml
