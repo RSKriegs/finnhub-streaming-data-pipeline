@@ -2,11 +2,13 @@
 #Requires finnhub package - run pip install finnhub-python before running, or run requirements.txt file
 
 import argparse
-from src.utils.functions import load_config, load_client, lookup_ticker
+import os
+from src.utils.functions import load_client, lookup_ticker
 
 if __name__ == '__main__':
-    config = load_config('src/config.json')
-    finnhub_client = load_client(config['FINNHUB_API_TOKEN'])
+    #finnhub_client = load_client('') #uncomment this, insert token and comment following line to run locally
+    finnhub_client = load_client(os.environ['FINNHUB_API_TOKEN'])
+
     parser = argparse.ArgumentParser(description="Get list of tickers based on Finnhub search",
                                      prog="ticker_search.py",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
