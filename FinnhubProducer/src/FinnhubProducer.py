@@ -20,7 +20,7 @@ class FinnhubProducer:
         self.validate = os.environ['FINNHUB_VALIDATE_TICKERS']
 
         websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp(f"wss://ws.finnhub.io?token={os.environ['FINNHUB_API_TOKEN']}",
+        self.ws = websocket.WebSocketApp(f'wss://ws.finnhub.io?token={os.environ["FINNHUB_API_TOKEN"]}',
                               on_message = self.on_message,
                               on_error = self.on_error,
                               on_close = self.on_close)
@@ -46,7 +46,7 @@ class FinnhubProducer:
 
     def on_open(self, ws):
         for ticker in ast.literal_eval(os.environ['FINNHUB_STOCKS_TICKERS']):
-            if self.validate==1:
+            if self.validate=="1":
                 if(ticker_validator(self.finnhub_client,ticker)==True):
                     self.ws.send('{"type":"subscribe","symbol":"'+ticker+'"}')
                     print(f'Subscription for {ticker} succeeded')
