@@ -4,4 +4,7 @@ WORKDIR /opt/spark/jars
 
 COPY spark/target/dependency/ .
 
+COPY target/scala-2.12/streamprocessor-assembly-1.0.jar .
+
+USER root
 

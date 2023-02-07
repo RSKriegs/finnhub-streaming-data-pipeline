@@ -14,7 +14,9 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:6.2.0
+    build:
+      context: ./kafka
+      dockerfile: Dockerfile
     hostname: kafka
     container_name: kafka
     networks:
@@ -63,52 +65,10 @@ services:
       dockerfile: Dockerfile.k8s
     container_name: spark-k8s
 
-  spark-master:
-    build:
-      context: ./StreamProcessor/spark
-      dockerfile: Dockerfile.spark-master
-    container_name: spark-master
-    ports:
-      - "8080:8080"
-      - "7077:7077"
-    environment:
-      - INIT_DAEMON_STEP=setup_spark
-      - SPARK_PUBLIC_DNS=localhost
-    networks:
-      - pipeline-network
-
-  spark-worker-1:
-    build:
-      context: ./StreamProcessor/spark
-      dockerfile: Dockerfile.spark-worker
-    container_name: spark-worker-1
-    depends_on:
-      - spark-master
-    ports:
-      - "8081:8081"
-    environment:
-      - "SPARK_MASTER=spark://spark-master:7077"
-      - SPARK_PUBLIC_DNS=localhost
-    networks:
-      - pipeline-network  
-      
-  spark-worker-2:
-    build:
-      context: ./StreamProcessor/spark
-      dockerfile: Dockerfile.spark-worker
-    container_name: spark-worker-2
-    depends_on:
-      - spark-master
-    ports:
-      - "8082:8081"
-    environment:
-      - "SPARK_MASTER=spark://spark-master:7077"
-      - SPARK_PUBLIC_DNS=localhost
-    networks:
-      - pipeline-network
-
   cassandra:
-    image: cassandra:3.11.3
+    build:
+      context: ./cassandra
+      dockerfile: Dockerfile
     container_name: cassandra
     hostname: cassandra
     ports:
@@ -147,24 +107,6 @@ services:
       - 8001:8001
     depends_on:
       - kafka
-    networks:
-      - pipeline-network
-
-  streamprocessor:
-    build:
-      context: ./StreamProcessor
-      dockerfile: Dockerfile
-    container_name: StreamProcessor
-    ports:
-      - "8002:8002"
-      - "4040:4040"
-    environment:
-      - SPARK_PUBLIC_DNS=localhost
-    depends_on:
-      - spark-master
-      - spark-worker-1
-      - spark-worker-2
-      - cassandra
     networks:
       - pipeline-network
   

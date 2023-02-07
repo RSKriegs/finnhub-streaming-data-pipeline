@@ -1,15 +1,3 @@
-#!/bin/sh
+helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
 
-helm repo add incubator https://charts.helm.sh/incubator --force-update
-
-kubectl create namespace spark-operator
-
-helm install incubator/sparkoperator \
---namespace spark-operator \
---set sparkJobNamespace=default \
---set operatorVersion=latest \
---set enableWebhook=true \
---set enableBatchScheduler=true \
---generate-name
-
-kubectl apply -f spark-rbac.yaml
+helm install my-release spark-operator/spark-operator --namespace spark-operator --create-namespace --set sparkJobNamespace=default
