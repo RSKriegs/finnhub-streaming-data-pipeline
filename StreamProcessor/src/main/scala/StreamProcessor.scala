@@ -47,7 +47,7 @@ object StreamProcessor {
         val inputDF = spark
             .readStream
             .format("kafka")
-            .option("kafka.bootstrap.servers",settings.kafka("server_address"))
+            .option("kafka.bootstrap.servers",settings.kafka("server_k8s_address")) // change to settings.kafka("server_address") for docker
             .option("subscribe",settings.kafka("topic_market"))
             .option("minPartitions", settings.kafka("min_partitions"))
             .option("maxOffsetsPerTrigger", settings.spark("max_offsets_per_trigger"))
