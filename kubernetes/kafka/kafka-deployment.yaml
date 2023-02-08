@@ -125,6 +125,7 @@ metadata:
     io.kompose.service: kafka-service
   name: kafka-service
 spec:
+  clusterIP: None
   ports:
     - name: "9092"
       port: 9092
@@ -152,6 +153,7 @@ metadata:
     io.kompose.service: zookeeper
   name: zookeeper
 spec:
+  clusterIP: None
   ports:
     - name: "2181"
       port: 2181

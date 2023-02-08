@@ -63,7 +63,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
+                command: ["/bin/sh", "-c", "sleep 45 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
           name: cassandra
           ports:
             - containerPort: 9042
@@ -90,6 +90,7 @@ metadata:
     io.kompose.service: cassandra
   name: cassandra
 spec:
+  clusterIP: None
   ports:
     - name: "9042"
       port: 9042
@@ -112,5 +113,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 8Gi
+      storage: 1Gi
 status: {}

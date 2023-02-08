@@ -55,7 +55,9 @@ spec:
     - name: "3000"
       port: 3000
       targetPort: 3000
+      nodePort: 30001
   selector:
     io.kompose.service: grafana
+  type: NodePort
 status:
   loadBalancer: {}
