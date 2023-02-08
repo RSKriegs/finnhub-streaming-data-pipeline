@@ -14,9 +14,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    build:
-      context: ./kafka
-      dockerfile: Dockerfile
+    image: confluentinc/cp-kafka:6.2.0
     hostname: kafka
     container_name: kafka
     networks:
@@ -55,7 +53,7 @@ services:
       - kafka
     entrypoint: [ '/bin/sh', '-c' ]
     volumes:
-      - ./kafka/scripts/kafka-setup.sh:/kafka-setup.sh
+      - ./kafka/kafka-setup.sh:/kafka-setup.sh
     command: "/kafka-setup.sh"
 
   kafdrop:
@@ -116,9 +114,7 @@ services:
       - pipeline-network
 
   cassandra:
-    build:
-      context: ./cassandra
-      dockerfile: Dockerfile
+    image: cassandra:3.11.3
     container_name: cassandra
     hostname: cassandra
     ports:
@@ -150,9 +146,10 @@ services:
     networks:
       - pipeline-network
     depends_on:
-      - cassandra
+      cassandra:
+        condition: service_healthy
     volumes:
-      - ./cassandra/scripts/cassandra-setup.cql:/cassandra-setup.cql
+      - ./cassandra/cassandra-setup.cql:/cassandra-setup.cql
     command: /bin/bash -c "echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"
 
   finnhubproducer:
@@ -167,7 +164,8 @@ services:
     ports:
       - 8001:8001
     depends_on:
-      - kafka-init
+      kafka-init:
+        condition: service_completed_successfully
     networks:
       - pipeline-network
 
