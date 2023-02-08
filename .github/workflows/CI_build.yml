@@ -2,9 +2,9 @@ name: CI_build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
 
 jobs:
 
@@ -23,6 +23,11 @@ jobs:
     - name: Build with Maven
       run: mvn dependency:copy-dependencies --file pom.xml
       working-directory: StreamProcessor/spark
+    - name: SBT Action using scala-sbt
+      uses: acvogel/github-action-sbt@v0.1.2
+      with:
+        commands: sbt assembly
+        sbt_project_directory: StreamProcessor/spark
     - name: Setup docker compose
       uses: yu-ichiro/spin-up-docker-compose-action@v1
       with:
