@@ -35,6 +35,7 @@ object StreamProcessor {
             .master(settings.spark("master"))
             .appName(settings.spark("appName"))
             .config("spark.cassandra.connection.host",settings.cassandra("host"))
+            .config("spark.cassandra.connection.host",settings.cassandra("host"))
             .config("spark.cassandra.auth.username", settings.cassandra("username"))
             .config("spark.cassandra.auth.password", settings.cassandra("password"))
             .config("spark.sql.shuffle.partitions", settings.spark("shuffle_partitions"))
@@ -75,7 +76,6 @@ object StreamProcessor {
         // write query to Cassandra
         val query = finalDF
             .writeStream
-            .trigger(Trigger.ProcessingTime("5 seconds"))
             .foreachBatch { (batchDF:DataFrame,batchID:Long) =>
                 println(s"Writing to Cassandra $batchID")
                 batchDF.write

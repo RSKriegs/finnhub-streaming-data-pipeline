@@ -99,19 +99,3 @@ spec:
     io.kompose.service: cassandra
 status:
   loadBalancer: {}
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  creationTimestamp: null
-  labels:
-    io.kompose.service: cassandra-claim0
-  name: cassandra-claim0
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-status: {}
