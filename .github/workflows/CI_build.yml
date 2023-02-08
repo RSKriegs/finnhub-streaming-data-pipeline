@@ -27,7 +27,7 @@ jobs:
       uses: acvogel/github-action-sbt@v0.1.2
       with:
         commands: sbt assembly
-        sbt_project_directory: StreamProcessor/spark
+        sbt_project_directory: StreamProcessor
     - name: Setup docker compose
       uses: yu-ichiro/spin-up-docker-compose-action@v1
       with:
