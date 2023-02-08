@@ -37,11 +37,19 @@ spec:
             - name: CASSANDRA_NUM_TOKENS
               value: "128"
             - name: CASSANDRA_PASSWORD
-              value: cassandra
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: CASSANDRA_PASSWORD
+                  optional: false
             - name: CASSANDRA_RACK
               value: Rack1
             - name: CASSANDRA_USER
-              value: cassandra
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: CASSANDRA_USER
+                  optional: false
             - name: HEAP_NEWSIZE
               value: 128M
             - name: MAX_HEAP_SIZE
@@ -55,7 +63,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
+                command: ["/bin/sh", "-c", "sleep 45 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
           name: cassandra
           ports:
             - containerPort: 9042
@@ -82,6 +90,7 @@ metadata:
     io.kompose.service: cassandra
   name: cassandra
 spec:
+  clusterIP: None
   ports:
     - name: "9042"
       port: 9042
@@ -90,19 +99,3 @@ spec:
     io.kompose.service: cassandra
 status:
   loadBalancer: {}
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  creationTimestamp: null
-  labels:
-    io.kompose.service: cassandra-claim0
-  name: cassandra-claim0
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 8Gi
-status: {}

@@ -16,6 +16,7 @@ class Settings(config: Config) extends Serializable {
   var kafka: Map[String, String] = {
     Map(
       "server_address" -> config.getString("kafka.server_address"),
+      "server_k8s_address" -> config.getString("kafka.server_k8s_address"),
       "topic_market" -> config.getString("kafka.topics.market"),
       "min_partitions" -> config.getString("kafka.min_partitions.StreamProcessor")
     )

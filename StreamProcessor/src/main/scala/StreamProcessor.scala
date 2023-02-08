@@ -35,6 +35,7 @@ object StreamProcessor {
             .master(settings.spark("master"))
             .appName(settings.spark("appName"))
             .config("spark.cassandra.connection.host",settings.cassandra("host"))
+            .config("spark.cassandra.connection.host",settings.cassandra("host"))
             .config("spark.cassandra.auth.username", settings.cassandra("username"))
             .config("spark.cassandra.auth.password", settings.cassandra("password"))
             .config("spark.sql.shuffle.partitions", settings.spark("shuffle_partitions"))
@@ -47,7 +48,7 @@ object StreamProcessor {
         val inputDF = spark
             .readStream
             .format("kafka")
-            .option("kafka.bootstrap.servers",settings.kafka("server_address"))
+            .option("kafka.bootstrap.servers",settings.kafka("server_k8s_address")) // change to settings.kafka("server_address") for docker
             .option("subscribe",settings.kafka("topic_market"))
             .option("minPartitions", settings.kafka("min_partitions"))
             .option("maxOffsetsPerTrigger", settings.spark("max_offsets_per_trigger"))
@@ -75,7 +76,6 @@ object StreamProcessor {
         // write query to Cassandra
         val query = finalDF
             .writeStream
-            .trigger(Trigger.ProcessingTime("5 seconds"))
             .foreachBatch { (batchDF:DataFrame,batchID:Long) =>
                 println(s"Writing to Cassandra $batchID")
                 batchDF.write

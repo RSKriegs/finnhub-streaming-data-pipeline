@@ -1,4 +1,4 @@
-name := "StreamProcessor"
+name := "streamprocessor"
 
 version := "1.0"
 

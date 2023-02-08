@@ -1,6 +1,7 @@
 #Main file for Finnhub API & Kafka integration
-import websocket
+import os
 import json
+import websocket
 from utils.functions import *
 
 #proper class that ingests upcoming messages from Finnhub websocket into Kafka
@@ -8,14 +9,18 @@ class FinnhubProducer:
     
     def __init__(self):
         
-        self.config = load_config('config.json')
-        self.finnhub_client = load_client(self.config['FINNHUB_API_TOKEN'])
-        self.producer = load_producer(self.config['KAFKA_SERVER'])
-        self.avro_schema = load_avro_schema('schemas/trades.avsc')
-        self.validate = self.config['FINNHUB_VALIDATE_TICKERS']
+        print('Environment:')
+        for k, v in os.environ.items():
+            print(f'{k}={v}')
+
+        self.finnhub_client = load_client(os.environ['FINNHUB_API_TOKEN'])
+        self.producer = load_producer(f"{os.environ['KAFKA_SERVER']}:{os.environ['KAFKA_PORT']}") #change into ['KAFKA_SERVER'] for docker/docker-compose
+        self.avro_schema = load_avro_schema('src/schemas/trades.avsc')
+        self.tickers = os.environ['FINNHUB_STOCKS_TICKERS'].split(",")
+        self.validate = os.environ['FINNHUB_VALIDATE_TICKERS']
 
         websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp(f"wss://ws.finnhub.io?token={self.config['FINNHUB_API_TOKEN']}",
+        self.ws = websocket.WebSocketApp(f'wss://ws.finnhub.io?token={os.environ["FINNHUB_API_TOKEN"]}',
                               on_message = self.on_message,
                               on_error = self.on_error,
                               on_close = self.on_close)
@@ -31,7 +36,7 @@ class FinnhubProducer:
             }, 
             self.avro_schema
         )
-        self.producer.send(self.config['KAFKA_TOPIC'], avro_message)
+        self.producer.send(os.environ['KAFKA_TOPIC_NAME'], avro_message)
 
     def on_error(self, ws, error):
         print(error)
@@ -40,8 +45,8 @@ class FinnhubProducer:
         print("### closed ###")
 
     def on_open(self, ws):
-        for ticker in self.config['FINNHUB_STOCKS_TICKERS']:
-            if self.validate==1:
+        for ticker in self.tickers:
+            if self.validate=="1":
                 if(ticker_validator(self.finnhub_client,ticker)==True):
                     self.ws.send('{"type":"subscribe","symbol":"'+ticker+'"}')
                     print(f'Subscription for {ticker} succeeded')
