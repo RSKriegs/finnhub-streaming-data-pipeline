@@ -1,3 +1,5 @@
+resource "kubectl_manifest" "streamprocessor" {
+    yaml_body = <<YAML
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
@@ -25,3 +27,5 @@ spec:
     cores: 1
     instances: 1
     memory: "2g"
+YAML
+}
