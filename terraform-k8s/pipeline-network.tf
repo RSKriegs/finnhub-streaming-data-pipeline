@@ -10,6 +10,8 @@ resource "kubernetes_network_policy" "pipeline_network" {
       }
     }
 
+    policy_types = ["Ingress"]
+
     ingress {
       from {
         pod_selector {

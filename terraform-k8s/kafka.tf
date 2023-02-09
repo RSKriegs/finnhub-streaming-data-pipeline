@@ -113,7 +113,7 @@ resource "kubernetes_deployment" "kafka_service" {
           lifecycle {
             post_start {
               exec {
-                command = ["/bin/sh", "-c", "/kafka-setup-k8s.sh"]
+                command = ["/bin/sh", "-c", "kafka-topics --bootstrap-server localhost:29092 --create --if-not-exists --topic market --replication-factor 1 --partitions 1"]
               }
             }
           }
