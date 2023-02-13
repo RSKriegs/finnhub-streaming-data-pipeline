@@ -12,6 +12,10 @@ resource "helm_release" "spark-on-k8s" {
 }
 
 resource "kubernetes_manifest" "service_account" {
+  depends_on = [
+      "kubernetes_namespace.pipeline-namespace"
+  ]
+
   manifest = {
     "apiVersion" = "v1"
     "kind"       = "ServiceAccount"
@@ -42,6 +46,10 @@ resource "kubernetes_role" "spark_role" {
     }
   }
 
+  depends_on = [
+      "kubernetes_namespace.pipeline-namespace"
+  ]
+  
   rule {
     verbs      = ["*"]
     api_groups = [""]
@@ -67,6 +75,10 @@ resource "kubernetes_role_binding" "spark_role_binding" {
       "meta.helm.sh/release-namespace" = "spark-operator"
     }
   }
+  depends_on = [
+      "kubernetes_namespace.pipeline-namespace"
+  ]
+  
 
   subject {
     kind      = "ServiceAccount"

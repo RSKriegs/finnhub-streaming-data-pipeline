@@ -1,5 +1,9 @@
 resource "kubectl_manifest" "streamprocessor" {
-    yaml_body = <<YAML
+  depends_on = [
+      "kubernetes_deployment.kafka_service",
+      "kubernetes_deployment.cassandra"
+  ]
+  yaml_body = <<YAML
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:

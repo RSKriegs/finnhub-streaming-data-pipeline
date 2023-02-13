@@ -7,6 +7,10 @@ resource "kubernetes_deployment" "grafana" {
     }
   }
 
+  depends_on = [
+        "kubernetes_deployment.cassandra"
+  ]
+
   spec {
     replicas = 1
 
@@ -61,6 +65,10 @@ resource "kubernetes_service" "grafana" {
       "k8s.service" = "grafana"
     }
   }
+
+  depends_on = [
+        "kubernetes_deployment.grafana"
+  ]
 
   spec {
     port {

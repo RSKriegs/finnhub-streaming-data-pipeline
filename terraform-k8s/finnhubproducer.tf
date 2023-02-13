@@ -7,6 +7,11 @@ resource "kubernetes_deployment" "finnhubproducer" {
     }
   }
 
+  depends_on = [
+      "kubernetes_deployment.kafka_service",
+      "kubernetes_deployment.cassandra",
+  ]
+
   spec {
     replicas = 1
 
@@ -34,6 +39,9 @@ resource "kubernetes_deployment" "finnhubproducer" {
             config_map_ref {
               name = "pipeline-config"
             }
+          }
+
+          env_from {
             secret_ref {
               name = "pipeline-secrets"
             }
@@ -57,6 +65,10 @@ resource "kubernetes_service" "finnhubproducer" {
     }
   }
 
+  depends_on = [
+        "kubernetes_deployment.finnhubproducer"
+  ]
+  
   spec {
     port {
       name        = "8001"

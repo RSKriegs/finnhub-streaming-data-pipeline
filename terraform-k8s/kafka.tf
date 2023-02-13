@@ -1,3 +1,5 @@
+#Optional TO DO: add persistent volume & persistent volume claim for Kafka broker
+
 resource "kubernetes_deployment" "zookeeper" {
   metadata {
     name = "zookeeper"
@@ -7,6 +9,10 @@ resource "kubernetes_deployment" "zookeeper" {
     }
   }
 
+  depends_on = [
+        "kubernetes_namespace.pipeline-namespace"
+  ]
+  
   spec {
     replicas = 1
 
@@ -44,7 +50,7 @@ resource "kubernetes_deployment" "zookeeper" {
             value = "2000"
           }
         }
-
+        
         restart_policy = "Always"
       }
     }
@@ -56,16 +62,20 @@ resource "kubernetes_deployment" "kafka_service" {
     name = "kafka-service"
     namespace = "${var.namespace}"
     labels = {
-      "k8s.service" = "kafka-service"
+      "k8s.service" = "kafka"
     }
   }
+
+  depends_on = [
+        "kubernetes_deployment.zookeeper"
+  ]
 
   spec {
     replicas = 1
 
     selector {
       match_labels = {
-        "k8s.service" = "kafka-service"
+        "k8s.service" = "kafka"
       }
     }
 
@@ -74,7 +84,7 @@ resource "kubernetes_deployment" "kafka_service" {
         labels = {
           "k8s.network/pipeline-network" = "true"
 
-          "k8s.service" = "kafka-service"
+          "k8s.service" = "kafka"
         }
       }
 
@@ -192,6 +202,10 @@ resource "kubernetes_service" "zookeeper" {
     }
   }
 
+  depends_on = [
+        "kubernetes_deployment.zookeeper"
+  ]
+
   spec {
     port {
       name        = "2181"
@@ -212,9 +226,13 @@ resource "kubernetes_service" "kafka_service" {
     name = "kafka-service"
     namespace = "${var.namespace}"
     labels = {
-      "k8s.service" = "kafka-service"
+      "k8s.service" = "kafka"
     }
   }
+
+  depends_on = [
+        "kubernetes_deployment.kafka_service"
+  ]
 
   spec {
     port {
@@ -232,11 +250,11 @@ resource "kubernetes_service" "kafka_service" {
     port {
       name        = "19000"
       port        = 19000
-      target_port = "9000"
+      target_port = "19000"
     }
 
     selector = {
-      "k8s.service" = "kafka-service"
+      "k8s.service" = "kafka"
     }
 
     cluster_ip = "None"

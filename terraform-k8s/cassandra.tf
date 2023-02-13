@@ -1,22 +1,27 @@
+//Optional TO DO: attach cassandra web UI as ambassador
+
 resource "kubernetes_persistent_volume" "cassandra-db-volume" {
   metadata {
     name = "cassandra-db-volume"
   }
+  depends_on = [
+        "kubernetes_namespace.pipeline-namespace"
+  ]
   spec {
     capacity = {
-      storage = "5Gi"
+      storage = "1Gi"
     }
-    access_modes = ["ReadWriteMany"]
+    access_modes = ["ReadWriteOnce"]
     storage_class_name = "hostpath"
     persistent_volume_source {
       host_path {
-        path = "/data/pv0001/"
+        path = "/var/lib/minikube/pv0001/"
       }
     }
   }
 }
 
-resource "kubernetes_persistent_volume_claim" "cassandra_db-volume" {
+resource "kubernetes_persistent_volume_claim" "cassandra-db-volume" {
   metadata {
     name = "cassandra-db-volume"
     namespace = "${var.namespace}"
@@ -25,13 +30,17 @@ resource "kubernetes_persistent_volume_claim" "cassandra_db-volume" {
     }
   }
 
+  depends_on = [
+        "kubernetes_namespace.pipeline-namespace"
+  ]
+
   spec {
     access_modes = ["ReadWriteOnce"]
     storage_class_name = "hostpath"
 
     resources {
       requests = {
-        storage = "5Gi"
+        storage = "1Gi"
       }
     }
   }
@@ -45,6 +54,11 @@ resource "kubernetes_deployment" "cassandra" {
       "k8s.service" = "cassandra"
     }
   }
+
+  depends_on = [
+        "kubernetes_persistent_volume_claim.cassandra-db-volume",
+        "kubernetes_persistent_volume.cassandra-db-volume"
+  ]
 
   spec {
     replicas = 1
@@ -161,13 +175,15 @@ resource "kubernetes_deployment" "cassandra" {
           lifecycle {
             post_start {
               exec {
-                command = ["/bin/sh", "-c", "sleep 45 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
+                command = ["sleep 45 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
               }
             }
           }
 
+
           image_pull_policy = "Never"
         }
+
       }
     }
   }
@@ -181,6 +197,10 @@ resource "kubernetes_service" "cassandra" {
       "k8s.service" = "cassandra"
     }
   }
+
+  depends_on = [
+      "kubernetes_deployment.cassandra"
+  ]
 
   spec {
     port {
