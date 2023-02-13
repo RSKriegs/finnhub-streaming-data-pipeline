@@ -27,6 +27,7 @@ spec:
     cores: 1
     memory: "512m"
     serviceAccount: spark
+    javaOptions: "-Dconfig.resource=application.conf"
     envFrom:
     - configMapRef: { name: pipeline-config }
     - secretRef: { name: pipeline-secrets }
@@ -34,6 +35,7 @@ spec:
     cores: 1
     instances: 1
     memory: "2g"
+    javaOptions: "-Dconfig.resource=application.conf"
     envFrom:
     - configMapRef: { name: pipeline-config }
     - secretRef: { name: pipeline-secret }

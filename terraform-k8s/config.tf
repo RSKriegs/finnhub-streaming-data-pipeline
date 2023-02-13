@@ -24,8 +24,6 @@ resource "kubernetes_config_map" "pipeline-config" {
     KAFKA_PORT                    = "9092"
     KAFKA_TOPIC_NAME              = "market"
     KAFKA_MIN_PARTITIONS          = "1"
-
-    CASSANDRA_HOST                = "cassandra"
     
     SPARK_MASTER                  = "spark://spark-master:7077"
     SPARK_MAX_OFFSETS_PER_TRIGGER = "1000"
