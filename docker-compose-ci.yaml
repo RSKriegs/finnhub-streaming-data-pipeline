@@ -11,7 +11,7 @@ services:
   spark-k8s:
     build:
       context: ./StreamProcessor
-      dockerfile: Dockerfile.k8s
+      dockerfile: Dockerfile
     container_name: spark-k8s
 
   cassandra:
