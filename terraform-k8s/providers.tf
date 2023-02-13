@@ -26,5 +26,4 @@ provider "helm" {
   }
 }
 
-provider "kubectl" {
-}
+provider "kubectl" {}

@@ -1,15 +1,9 @@
-resource "kubernetes_deployment" "kafka_service" {
+resource "kubernetes_deployment" "zookeeper" {
   metadata {
-    name = "kafka-service"
-
+    name = "zookeeper"
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "kafka-service"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "zookeeper"
     }
   }
 
@@ -18,22 +12,69 @@ resource "kubernetes_deployment" "kafka_service" {
 
     selector {
       match_labels = {
-        "io.kompose.service" = "kafka-service"
+        "k8s.service" = "zookeeper"
       }
     }
 
     template {
       metadata {
         labels = {
-          "io.kompose.network/pipeline-network" = "true"
+          "k8s.network/pipeline-network" = "true"
 
-          "io.kompose.service" = "kafka-service"
+          "k8s.service" = "zookeeper"
+        }
+      }
+
+      spec {
+        container {
+          name  = "zookeeper"
+          image = "confluentinc/cp-zookeeper:6.2.0"
+
+          port {
+            container_port = 2181
+          }
+
+          env {
+            name  = "ZOOKEEPER_CLIENT_PORT"
+            value = "2181"
+          }
+
+          env {
+            name  = "ZOOKEEPER_TICK_TIME"
+            value = "2000"
+          }
         }
 
-        annotations = {
-          "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
+        restart_policy = "Always"
+      }
+    }
+  }
+}
 
-          "kompose.version" = "1.27.0 (b0ed6a2c9)"
+resource "kubernetes_deployment" "kafka_service" {
+  metadata {
+    name = "kafka-service"
+    namespace = "${var.namespace}"
+    labels = {
+      "k8s.service" = "kafka-service"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        "k8s.service" = "kafka-service"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          "k8s.network/pipeline-network" = "true"
+
+          "k8s.service" = "kafka-service"
         }
       }
 
@@ -142,83 +183,36 @@ resource "kubernetes_deployment" "kafka_service" {
   }
 }
 
-resource "kubernetes_deployment" "zookeeper" {
+resource "kubernetes_service" "zookeeper" {
   metadata {
     name = "zookeeper"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "zookeeper"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "zookeeper"
     }
   }
 
   spec {
-    replicas = 1
-
-    selector {
-      match_labels = {
-        "io.kompose.service" = "zookeeper"
-      }
+    port {
+      name        = "2181"
+      port        = 2181
+      target_port = "2181"
     }
 
-    template {
-      metadata {
-        labels = {
-          "io.kompose.network/pipeline-network" = "true"
-
-          "io.kompose.service" = "zookeeper"
-        }
-
-        annotations = {
-          "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-          "kompose.version" = "1.27.0 (b0ed6a2c9)"
-        }
-      }
-
-      spec {
-        container {
-          name  = "zookeeper"
-          image = "confluentinc/cp-zookeeper:6.2.0"
-
-          port {
-            container_port = 2181
-          }
-
-          env {
-            name  = "ZOOKEEPER_CLIENT_PORT"
-            value = "2181"
-          }
-
-          env {
-            name  = "ZOOKEEPER_TICK_TIME"
-            value = "2000"
-          }
-        }
-
-        restart_policy = "Always"
-      }
+    selector = {
+      "k8s.service" = "zookeeper"
     }
+
+    cluster_ip = "None"
   }
 }
 
 resource "kubernetes_service" "kafka_service" {
   metadata {
     name = "kafka-service"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "kafka-service"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "kafka-service"
     }
   }
 
@@ -242,37 +236,7 @@ resource "kubernetes_service" "kafka_service" {
     }
 
     selector = {
-      "io.kompose.service" = "kafka-service"
-    }
-
-    cluster_ip = "None"
-  }
-}
-
-resource "kubernetes_service" "zookeeper" {
-  metadata {
-    name = "zookeeper"
-
-    labels = {
-      "io.kompose.service" = "zookeeper"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
-    }
-  }
-
-  spec {
-    port {
-      name        = "2181"
-      port        = 2181
-      target_port = "2181"
-    }
-
-    selector = {
-      "io.kompose.service" = "zookeeper"
+      "k8s.service" = "kafka-service"
     }
 
     cluster_ip = "None"

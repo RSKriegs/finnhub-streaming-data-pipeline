@@ -1,18 +1,37 @@
-resource "kubernetes_persistent_volume_claim" "cassandra_claim_0" {
+resource "kubernetes_persistent_volume" "cassandra-db-volume" {
   metadata {
-    name = "cassandra-claim0"
+    name = "cassandra-db-volume"
+  }
+  spec {
+    capacity = {
+      storage = "5Gi"
+    }
+    access_modes = ["ReadWriteMany"]
+    storage_class_name = "hostpath"
+    persistent_volume_source {
+      host_path {
+        path = "/data/pv0001/"
+      }
+    }
+  }
+}
 
+resource "kubernetes_persistent_volume_claim" "cassandra_db-volume" {
+  metadata {
+    name = "cassandra-db-volume"
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "cassandra-claim0"
+      "k8s.service" = "cassandra-db-volume"
     }
   }
 
   spec {
     access_modes = ["ReadWriteOnce"]
+    storage_class_name = "hostpath"
 
     resources {
       requests = {
-        storage = "1Gi"
+        storage = "5Gi"
       }
     }
   }
@@ -21,15 +40,9 @@ resource "kubernetes_persistent_volume_claim" "cassandra_claim_0" {
 resource "kubernetes_deployment" "cassandra" {
   metadata {
     name = "cassandra"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "cassandra"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "cassandra"
     }
   }
 
@@ -38,22 +51,16 @@ resource "kubernetes_deployment" "cassandra" {
 
     selector {
       match_labels = {
-        "io.kompose.service" = "cassandra"
+        "k8s.service" = "cassandra"
       }
     }
 
     template {
       metadata {
         labels = {
-          "io.kompose.network/pipeline-network" = "true"
+          "k8s.network/pipeline-network" = "true"
 
-          "io.kompose.service" = "cassandra"
-        }
-
-        annotations = {
-          "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-          "kompose.version" = "1.27.0 (b0ed6a2c9)"
+          "k8s.service" = "cassandra"
         }
       }
 
@@ -62,7 +69,7 @@ resource "kubernetes_deployment" "cassandra" {
           name = "cassandra-data"
 
           persistent_volume_claim {
-            claim_name = "cassandra-claim0"
+            claim_name = "cassandra-db-volume"
           }
         }
 
@@ -104,7 +111,7 @@ resource "kubernetes_deployment" "cassandra" {
 
             value_from {
               secret_key_ref {
-                name = "secrets"
+                name = "pipeline-secrets"
                 key  = "CASSANDRA_PASSWORD"
               }
             }
@@ -120,7 +127,7 @@ resource "kubernetes_deployment" "cassandra" {
 
             value_from {
               secret_key_ref {
-                name = "secrets"
+                name = "pipeline-secrets"
                 key  = "CASSANDRA_USER"
               }
             }
@@ -161,8 +168,6 @@ resource "kubernetes_deployment" "cassandra" {
 
           image_pull_policy = "Never"
         }
-
-        hostname = "cassandra"
       }
     }
   }
@@ -171,15 +176,9 @@ resource "kubernetes_deployment" "cassandra" {
 resource "kubernetes_service" "cassandra" {
   metadata {
     name = "cassandra"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "cassandra"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "cassandra"
     }
   }
 
@@ -191,7 +190,7 @@ resource "kubernetes_service" "cassandra" {
     }
 
     selector = {
-      "io.kompose.service" = "cassandra"
+      "k8s.service" = "cassandra"
     }
 
     cluster_ip = "None"

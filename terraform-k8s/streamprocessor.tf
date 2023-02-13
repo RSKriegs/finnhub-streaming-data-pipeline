@@ -4,7 +4,7 @@ apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
   name: streamprocessor
-  namespace: default
+  namespace: ${var.namespace}
 spec:
   type: Scala
   mode: cluster
@@ -23,9 +23,15 @@ spec:
     cores: 1
     memory: "512m"
     serviceAccount: spark
+    envFrom:
+    - configMapRef: { name: pipeline-config }
+    - secretRef: { name: pipeline-secrets }
   executor:
     cores: 1
     instances: 1
     memory: "2g"
+    envFrom:
+    - configMapRef: { name: pipeline-config }
+    - secretRef: { name: pipeline-secret }
 YAML
 }

@@ -17,7 +17,7 @@ resource "kubernetes_manifest" "service_account" {
     "kind"       = "ServiceAccount"
     "metadata" = {
       "name"      = "spark"
-      "namespace" = "default"
+      "namespace" = "${var.namespace}"
       "labels" = {
         "app.kubernetes.io/managed-by" = "Helm"
       }
@@ -32,7 +32,7 @@ resource "kubernetes_manifest" "service_account" {
 resource "kubernetes_role" "spark_role" {
   metadata {
     name      = "spark-role"
-    namespace = "default"
+    namespace = "${var.namespace}"
     labels = {
       "app.kubernetes.io/managed-by" = "Helm"
     }
@@ -58,7 +58,7 @@ resource "kubernetes_role" "spark_role" {
 resource "kubernetes_role_binding" "spark_role_binding" {
   metadata {
     name      = "spark-role-binding"
-    namespace = "default"
+    namespace = "${var.namespace}"
     labels = {
       "app.kubernetes.io/managed-by" = "Helm"
     }
@@ -71,7 +71,7 @@ resource "kubernetes_role_binding" "spark_role_binding" {
   subject {
     kind      = "ServiceAccount"
     name      = "spark"
-    namespace = "default"
+    namespace = pathexpand(var.namespace)
   }
 
   role_ref {
