@@ -176,7 +176,7 @@ resource "kubernetes_deployment" "cassandra" {
           lifecycle {
             post_start {
               exec {
-                command = ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
+                command = ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -f /cassandra-setup.cql"]
               }
             }
           }
