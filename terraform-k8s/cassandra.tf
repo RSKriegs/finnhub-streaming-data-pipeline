@@ -1,5 +1,9 @@
 //Optional TO DO: attach cassandra web UI as ambassador
 
+//known issue - upon terraform destroy the cassandra deployment & volume fails to be deleted.
+//In such cases the deletion can be applied with kubectl delete deployments command.
+//TODO: fix the issue above
+
 resource "kubernetes_persistent_volume" "cassandra-db-volume" {
   metadata {
     name = "cassandra-db-volume"
@@ -175,7 +179,7 @@ resource "kubernetes_deployment" "cassandra" {
           lifecycle {
             post_start {
               exec {
-                command = ["sleep 45 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
+                command = ["/bin/bash", "-c", "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
               }
             }
           }
