@@ -15,7 +15,7 @@ resource "kubernetes_persistent_volume" "cassandra-db-volume" {
     }
     access_modes = ["ReadWriteMany"]
     storage_class_name = "hostpath"
-    persistent_volume_reclaim_policy = "retain"
+    persistent_volume_reclaim_policy = "Retain"
     persistent_volume_source {
       host_path {
         path = "/var/lib/minikube/pv0001/"
