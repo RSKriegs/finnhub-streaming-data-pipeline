@@ -1,3 +1,4 @@
+#TODO: verify if persistent volumes work 100% as intended
 #Optional TO DO: verify all Cassandra parameters in env
 #Optional TO DO: attach Cassandra web UI as ambassador
 #Optional TO DO: configure health checks, liveness/readiness probes
