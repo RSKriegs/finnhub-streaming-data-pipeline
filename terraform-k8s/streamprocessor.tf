@@ -1,3 +1,5 @@
+//TODO: environment variables issue - spark driver fails to mount configMaps, fix the issue as follows: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/issues/1619
+
 resource "kubectl_manifest" "streamprocessor" {
   depends_on = [
       "kubernetes_deployment.kafka_service",
@@ -27,17 +29,21 @@ spec:
     cores: 1
     memory: "512m"
     serviceAccount: spark
-    javaOptions: "-Dconfig.resource=application.conf"
+    javaOptions: "-Dconfig.resource=deployment.conf"
     envFrom:
-    - configMapRef: { name: pipeline-config }
-    - secretRef: { name: pipeline-secrets }
+    - configMapRef:
+        name: pipeline-config
+    - secretRef:
+        name: pipeline-secrets
   executor:
     cores: 1
     instances: 1
     memory: "2g"
-    javaOptions: "-Dconfig.resource=application.conf"
+    javaOptions: "-Dconfig.resource=deployment.conf"
     envFrom:
-    - configMapRef: { name: pipeline-config }
-    - secretRef: { name: pipeline-secret }
+    - configMapRef:
+        name: pipeline-config
+    - secretRef:
+        name: pipeline-secrets
 YAML
 }

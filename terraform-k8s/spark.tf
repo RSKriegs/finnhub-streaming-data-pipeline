@@ -9,6 +9,11 @@ resource "helm_release" "spark-on-k8s" {
     name  = "sparkJobNamespace"
     value = pathexpand(var.namespace)
   }
+
+  set {
+    name  = "webhook.enable"
+    value = true
+  }
 }
 
 resource "kubernetes_manifest" "service_account" {

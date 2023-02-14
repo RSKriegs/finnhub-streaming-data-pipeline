@@ -1,3 +1,4 @@
+#Optional TO DO: Kafdrop seems to have broken down - fails while being exposed. Fix it
 #Optional TO DO: verify all Kafka parameters in env
 #Optional TO DO: add persistent volume & persistent volume claim for Kafka broker
 #Optional TO DO: configure health checks, liveness/readiness probes
@@ -110,7 +111,7 @@ resource "kubernetes_deployment" "kafka_service" {
 
           env {
             name  = "KAFKA_ADVERTISED_LISTENERS"
-            value = "PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka-service.default.svc.cluster.local:9092"
+            value = "PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka-service.${var.namespace}.svc.cluster.local:9092"
           }
 
           env {
@@ -176,10 +177,10 @@ resource "kubernetes_deployment" "kafka_service" {
 
         container {
           name  = "kafdrop"
-          image = "obsidiandynamics/kafdrop:3.27.0"
+          image = "obsidiandynamics/kafdrop:3.30.0"
 
           port {
-            container_port = 9000
+            container_port = 19000
           }
 
           env {
@@ -189,7 +190,7 @@ resource "kubernetes_deployment" "kafka_service" {
         }
 
         restart_policy = "Always"
-        hostname       = "kafka-service"
+        hostname = "kafka-service"
       }
     }
   }

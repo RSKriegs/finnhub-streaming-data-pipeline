@@ -1,6 +1,10 @@
-name := "streamprocessor"
-version := "1.0"
-scalaVersion := "2.12.15"
+//Optional TO DO: verify configs
+lazy val root = (project in file(".")).
+  settings(
+    name := "streamprocessor",
+    version := "1.0",
+    scalaVersion := "2.12.15"
+  )
 
 val sparkVersion = "3.0.0"
 
@@ -16,7 +20,7 @@ libraryDependencies ++= Seq(
     "com.typesafe" % "config" % "1.4.1"
 )
 
-javaOptions := Seq("-Dconfig.resource=application.conf")
+javaOptions := Seq("-Dconfig.resource=deployment.conf")
 
 //below filename is default for assembly, but I include it for readability
 assemblyJarName in assembly := "streamprocessor-assembly-1.0.jar"

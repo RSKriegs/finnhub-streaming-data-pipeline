@@ -1,3 +1,5 @@
+//TODO: verify environment variables issue
+
 import com.typesafe.config.Config
 
 class Settings(config: Config) extends Serializable {
