@@ -1,4 +1,6 @@
-//Optional TO DO: attach cassandra web UI as ambassador
+#Optional TO DO: verify all Cassandra parameters in env
+#Optional TO DO: attach Cassandra web UI as ambassador
+#Optional TO DO: configure health checks, liveness/readiness probes
 
 resource "kubernetes_persistent_volume" "cassandra-db-volume" {
   metadata {
@@ -11,8 +13,9 @@ resource "kubernetes_persistent_volume" "cassandra-db-volume" {
     capacity = {
       storage = "1Gi"
     }
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
     storage_class_name = "hostpath"
+    persistent_volume_reclaim_policy = "retain"
     persistent_volume_source {
       host_path {
         path = "/var/lib/minikube/pv0001/"
@@ -35,7 +38,7 @@ resource "kubernetes_persistent_volume_claim" "cassandra-db-volume" {
   ]
 
   spec {
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
     storage_class_name = "hostpath"
 
     resources {

@@ -1,4 +1,6 @@
+#Optional TO DO: verify all Kafka parameters in env
 #Optional TO DO: add persistent volume & persistent volume claim for Kafka broker
+#Optional TO DO: configure health checks, liveness/readiness probes
 
 resource "kubernetes_deployment" "zookeeper" {
   metadata {

@@ -1,10 +1,9 @@
-DROP KEYSPACE IF EXISTS market;
-
-CREATE KEYSPACE market WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+CREATE KEYSPACE IF NOT EXISTS market 
+    WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
 
 USE market;
 
-CREATE TABLE trades(
+CREATE TABLE IF NOT EXISTS  trades(
     uuid uuid,
     trade_conditions text,
     price double,
@@ -18,7 +17,7 @@ CREATE TABLE trades(
 
 CREATE INDEX IF NOT EXISTS ON trades (uuid);
 
-CREATE TABLE running_averages_15_sec(
+CREATE TABLE IF NOT EXISTS running_averages_15_sec(
     uuid uuid,
     symbol text,
     price_volume_multiply double,
