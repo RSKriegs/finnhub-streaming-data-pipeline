@@ -1,3 +1,5 @@
+//TO DO: cleanup & formatting for Terraform K8s files
+//Optional TO DO: Network policy is most likely unnecessary at this point. Verify that and if that's the case - delete it and related labels from deployments
 //Optional TO DO: apply poddisruptionbudget
 
 resource "kubernetes_namespace" "pipeline-namespace" {
