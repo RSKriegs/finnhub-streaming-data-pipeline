@@ -16,10 +16,14 @@ libraryDependencies ++= Seq(
     "com.typesafe" % "config" % "1.4.1"
 )
 
+javaOptions := Seq("-Dconfig.resource=application.conf")
+
 //below filename is default for assembly, but I include it for readability
 assemblyJarName in assembly := "streamprocessor-assembly-1.0.jar"
 
 assemblyMergeStrategy in assembly := {
- case PathList("META-INF", _*) => MergeStrategy.discard
- case _                        => MergeStrategy.first
+  case "reference.conf" => MergeStrategy.concat
+  case "META-INF/services/org.apache.spark.sql.sources.DataSourceRegister" => MergeStrategy.concat
+  case PathList("META-INF", xs@_*) => MergeStrategy.discard
+  case _ => MergeStrategy.first
 }
