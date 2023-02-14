@@ -1,5 +1,3 @@
-//TODO: environment variables issue - spark driver fails to mount configMaps, fix the issue as follows: https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/issues/1619
-
 resource "kubectl_manifest" "streamprocessor" {
   depends_on = [
       "kubernetes_deployment.kafka_service",

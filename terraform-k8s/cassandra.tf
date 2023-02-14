@@ -1,7 +1,8 @@
 #TODO: verify if persistent volumes work 100% as intended
 #Optional TO DO: verify all Cassandra parameters in env
 #Optional TO DO: attach Cassandra web UI as ambassador
-#Optional TO DO: configure health checks, liveness/readiness probes
+#Optional TO DO: deploy Cassandra as StatefulSet
+#Optional TO DO: configure health checks & readiness/liveness probes
 
 resource "kubernetes_persistent_volume" "cassandra-db-volume" {
   metadata {
@@ -50,7 +51,7 @@ resource "kubernetes_persistent_volume_claim" "cassandra-db-volume" {
   }
 }
 
-resource "kubernetes_deployment" "cassandra" {
+resource "kubernetes_stateful_set" "cassandra" {
   metadata {
     name = "cassandra"
     namespace = "${var.namespace}"
@@ -180,9 +181,17 @@ resource "kubernetes_deployment" "cassandra" {
           lifecycle {
             post_start {
               exec {
-                command = ["/bin/sh", "-c", "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -f /cassandra-setup.cql"]
+                command = ["/bin/sh", "-c", "echo loading cassandra keyspace && cqlsh cassandra -f /cassandra-setup.cql"]
               }
             }
+          }
+
+          readiness_probe {
+            exec {
+              command = ["bin/sh", "-c", "/ready-probe.sh"]
+            }
+            initial_delay_seconds = 30
+            timeout_seconds = 5
           }
 
           image_pull_policy = "Never"
@@ -201,9 +210,6 @@ resource "kubernetes_service" "cassandra" {
     }
   }
 
-  depends_on = [
-      "kubernetes_deployment.cassandra"
-  ]
 
   spec {
     port {

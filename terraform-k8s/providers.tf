@@ -28,3 +28,4 @@ provider "helm" {
 
 #this one is used to deploy SparkApplication properly
 provider "kubectl" {}
+
