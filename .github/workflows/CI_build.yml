@@ -1,8 +1,9 @@
+#Optional TODO: implement more sophisticated CI pipeline including K8s & Terraform
 name: CI_build
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -13,21 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn dependency:copy-dependencies --file pom.xml
-      working-directory: StreamProcessor/spark
-    - name: SBT Action using scala-sbt
-      uses: acvogel/github-action-sbt@v0.1.2
-      with:
-        commands: assembly
-        sbt_project_directory: StreamProcessor
     - name: Setup docker compose
       uses: yu-ichiro/spin-up-docker-compose-action@v1
       with:

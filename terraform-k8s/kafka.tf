@@ -1,39 +1,93 @@
-resource "kubernetes_deployment" "kafka_service" {
+#Optional TO DO: Kafdrop seems to have broken down - fails while being exposed. Fix it
+#Optional TO DO: verify all Kafka parameters in env
+#Optional TO DO: add persistent volume & persistent volume claim for Kafka broker
+#Optional TO DO: configure health checks, liveness/readiness probes
+
+resource "kubernetes_deployment" "zookeeper" {
   metadata {
-    name = "kafka-service"
-
+    name = "zookeeper"
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "kafka-service"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "zookeeper"
     }
   }
 
+  depends_on = [
+        "kubernetes_namespace.pipeline-namespace"
+  ]
+  
   spec {
     replicas = 1
 
     selector {
       match_labels = {
-        "io.kompose.service" = "kafka-service"
+        "k8s.service" = "zookeeper"
       }
     }
 
     template {
       metadata {
         labels = {
-          "io.kompose.network/pipeline-network" = "true"
+          "k8s.network/pipeline-network" = "true"
 
-          "io.kompose.service" = "kafka-service"
+          "k8s.service" = "zookeeper"
         }
+      }
 
-        annotations = {
-          "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
+      spec {
+        container {
+          name  = "zookeeper"
+          image = "confluentinc/cp-zookeeper:6.2.0"
 
-          "kompose.version" = "1.27.0 (b0ed6a2c9)"
+          port {
+            container_port = 2181
+          }
+
+          env {
+            name  = "ZOOKEEPER_CLIENT_PORT"
+            value = "2181"
+          }
+
+          env {
+            name  = "ZOOKEEPER_TICK_TIME"
+            value = "2000"
+          }
+        }
+        
+        restart_policy = "Always"
+      }
+    }
+  }
+}
+
+resource "kubernetes_deployment" "kafka_service" {
+  metadata {
+    name = "kafka-service"
+    namespace = "${var.namespace}"
+    labels = {
+      "k8s.service" = "kafka"
+    }
+  }
+
+  depends_on = [
+        "kubernetes_deployment.zookeeper"
+  ]
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        "k8s.service" = "kafka"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          "k8s.network/pipeline-network" = "true"
+
+          "k8s.service" = "kafka"
         }
       }
 
@@ -57,7 +111,7 @@ resource "kubernetes_deployment" "kafka_service" {
 
           env {
             name  = "KAFKA_ADVERTISED_LISTENERS"
-            value = "PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka-service.default.svc.cluster.local:9092"
+            value = "PLAINTEXT://localhost:29092,PLAINTEXT_HOST://kafka-service.${var.namespace}.svc.cluster.local:9092"
           }
 
           env {
@@ -113,7 +167,7 @@ resource "kubernetes_deployment" "kafka_service" {
           lifecycle {
             post_start {
               exec {
-                command = ["/bin/sh", "-c", "kafka-topics --bootstrap-server localhost:29092 --create --if-not-exists --topic market --replication-factor 1 --partitions 1"]
+                command = ["/bin/sh", "-c", "/kafka-setup-k8s.sh"]
               }
             }
           }
@@ -123,10 +177,10 @@ resource "kubernetes_deployment" "kafka_service" {
 
         container {
           name  = "kafdrop"
-          image = "obsidiandynamics/kafdrop:3.27.0"
+          image = "obsidiandynamics/kafdrop:3.30.0"
 
           port {
-            container_port = 9000
+            container_port = 19000
           }
 
           env {
@@ -136,91 +190,52 @@ resource "kubernetes_deployment" "kafka_service" {
         }
 
         restart_policy = "Always"
-        hostname       = "kafka-service"
+        hostname = "kafka-service"
       }
     }
   }
 }
 
-resource "kubernetes_deployment" "zookeeper" {
+resource "kubernetes_service" "zookeeper" {
   metadata {
     name = "zookeeper"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "zookeeper"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "zookeeper"
     }
   }
 
+  depends_on = [
+        "kubernetes_deployment.zookeeper"
+  ]
+
   spec {
-    replicas = 1
-
-    selector {
-      match_labels = {
-        "io.kompose.service" = "zookeeper"
-      }
+    port {
+      name        = "2181"
+      port        = 2181
+      target_port = "2181"
     }
 
-    template {
-      metadata {
-        labels = {
-          "io.kompose.network/pipeline-network" = "true"
-
-          "io.kompose.service" = "zookeeper"
-        }
-
-        annotations = {
-          "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-          "kompose.version" = "1.27.0 (b0ed6a2c9)"
-        }
-      }
-
-      spec {
-        container {
-          name  = "zookeeper"
-          image = "confluentinc/cp-zookeeper:6.2.0"
-
-          port {
-            container_port = 2181
-          }
-
-          env {
-            name  = "ZOOKEEPER_CLIENT_PORT"
-            value = "2181"
-          }
-
-          env {
-            name  = "ZOOKEEPER_TICK_TIME"
-            value = "2000"
-          }
-        }
-
-        restart_policy = "Always"
-      }
+    selector = {
+      "k8s.service" = "zookeeper"
     }
+
+    cluster_ip = "None"
   }
 }
 
 resource "kubernetes_service" "kafka_service" {
   metadata {
     name = "kafka-service"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "kafka-service"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "kafka"
     }
   }
+
+  depends_on = [
+        "kubernetes_deployment.kafka_service"
+  ]
 
   spec {
     port {
@@ -238,41 +253,11 @@ resource "kubernetes_service" "kafka_service" {
     port {
       name        = "19000"
       port        = 19000
-      target_port = "9000"
+      target_port = "19000"
     }
 
     selector = {
-      "io.kompose.service" = "kafka-service"
-    }
-
-    cluster_ip = "None"
-  }
-}
-
-resource "kubernetes_service" "zookeeper" {
-  metadata {
-    name = "zookeeper"
-
-    labels = {
-      "io.kompose.service" = "zookeeper"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
-    }
-  }
-
-  spec {
-    port {
-      name        = "2181"
-      port        = 2181
-      target_port = "2181"
-    }
-
-    selector = {
-      "io.kompose.service" = "zookeeper"
+      "k8s.service" = "kafka"
     }
 
     cluster_ip = "None"

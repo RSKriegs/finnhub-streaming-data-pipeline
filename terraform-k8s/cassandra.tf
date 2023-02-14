@@ -1,14 +1,47 @@
-resource "kubernetes_persistent_volume_claim" "cassandra_claim_0" {
-  metadata {
-    name = "cassandra-claim0"
+#TODO: verify if persistent volumes work 100% as intended
+#Optional TO DO: verify all Cassandra parameters in env
+#Optional TO DO: attach Cassandra web UI as ambassador
+#Optional TO DO: deploy Cassandra as StatefulSet
+#Optional TO DO: configure health checks & readiness/liveness probes
 
+resource "kubernetes_persistent_volume" "cassandra-db-volume" {
+  metadata {
+    name = "cassandra-db-volume"
+  }
+  depends_on = [
+        "kubernetes_namespace.pipeline-namespace"
+  ]
+  spec {
+    capacity = {
+      storage = "1Gi"
+    }
+    access_modes = ["ReadWriteMany"]
+    storage_class_name = "hostpath"
+    persistent_volume_reclaim_policy = "Retain"
+    persistent_volume_source {
+      host_path {
+        path = "/var/lib/minikube/pv0001/"
+      }
+    }
+  }
+}
+
+resource "kubernetes_persistent_volume_claim" "cassandra-db-volume" {
+  metadata {
+    name = "cassandra-db-volume"
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "cassandra-claim0"
+      "k8s.service" = "cassandra-db-volume"
     }
   }
 
+  depends_on = [
+        "kubernetes_namespace.pipeline-namespace"
+  ]
+
   spec {
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
+    storage_class_name = "hostpath"
 
     resources {
       requests = {
@@ -18,51 +51,45 @@ resource "kubernetes_persistent_volume_claim" "cassandra_claim_0" {
   }
 }
 
-resource "kubernetes_deployment" "cassandra" {
+resource "kubernetes_stateful_set" "cassandra" {
   metadata {
     name = "cassandra"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "cassandra"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "cassandra"
     }
   }
+
+  depends_on = [
+        "kubernetes_persistent_volume_claim.cassandra-db-volume",
+        "kubernetes_persistent_volume.cassandra-db-volume"
+  ]
 
   spec {
     replicas = 1
 
     selector {
       match_labels = {
-        "io.kompose.service" = "cassandra"
+        "k8s.service" = "cassandra"
       }
     }
 
     template {
       metadata {
         labels = {
-          "io.kompose.network/pipeline-network" = "true"
+          "k8s.network/pipeline-network" = "true"
 
-          "io.kompose.service" = "cassandra"
-        }
-
-        annotations = {
-          "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-          "kompose.version" = "1.27.0 (b0ed6a2c9)"
+          "k8s.service" = "cassandra"
         }
       }
 
       spec {
+        hostname = "cassandra"
         volume {
           name = "cassandra-data"
 
           persistent_volume_claim {
-            claim_name = "cassandra-claim0"
+            claim_name = "cassandra-db-volume"
           }
         }
 
@@ -104,7 +131,7 @@ resource "kubernetes_deployment" "cassandra" {
 
             value_from {
               secret_key_ref {
-                name = "secrets"
+                name = "pipeline-secrets"
                 key  = "CASSANDRA_PASSWORD"
               }
             }
@@ -120,7 +147,7 @@ resource "kubernetes_deployment" "cassandra" {
 
             value_from {
               secret_key_ref {
-                name = "secrets"
+                name = "pipeline-secrets"
                 key  = "CASSANDRA_USER"
               }
             }
@@ -154,15 +181,21 @@ resource "kubernetes_deployment" "cassandra" {
           lifecycle {
             post_start {
               exec {
-                command = ["/bin/sh", "-c", "sleep 45 && echo loading cassandra keyspace && cqlsh cassandra -u cassandra -p cassandra -f /cassandra-setup.cql"]
+                command = ["/bin/sh", "-c", "echo loading cassandra keyspace && cqlsh cassandra -f /cassandra-setup.cql"]
               }
             }
           }
 
+          readiness_probe {
+            exec {
+              command = ["bin/sh", "-c", "/ready-probe.sh"]
+            }
+            initial_delay_seconds = 30
+            timeout_seconds = 5
+          }
+
           image_pull_policy = "Never"
         }
-
-        hostname = "cassandra"
       }
     }
   }
@@ -171,17 +204,12 @@ resource "kubernetes_deployment" "cassandra" {
 resource "kubernetes_service" "cassandra" {
   metadata {
     name = "cassandra"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "cassandra"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "cassandra"
     }
   }
+
 
   spec {
     port {
@@ -191,7 +219,7 @@ resource "kubernetes_service" "cassandra" {
     }
 
     selector = {
-      "io.kompose.service" = "cassandra"
+      "k8s.service" = "cassandra"
     }
 
     cluster_ip = "None"

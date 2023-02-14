@@ -1,7 +1,21 @@
-FROM bde2020/spark-sbt-template:3.2.1-hadoop3.2
+FROM maven:alpine AS maven_builder
 
-COPY ./spark/target/dependency /spark/jars
+WORKDIR /maven
+COPY pom.xml .
+RUN mvn dependency:copy-dependencies
 
-ENV SPARK_APPLICATION_MAIN_CLASS StreamProcessor
-ENV SPARK_APPLICATION_ARGS "--packages org.apache.spark:spark-sql-kafka-0-10_2.12-3.2.1,org.apache.spark:spark-avro_2.12:3.2.1, \
-                            spark-cassandra-connector_2.12-3.2.0,cassandra-driver-core-3.11.13"
+FROM sbtscala/scala-sbt:eclipse-temurin-17.0.4_1.7.1_3.2.0 as sbt_builder
+
+COPY build.sbt /sbt/build.sbt
+ADD src /sbt/src/
+ADD project /sbt/project/
+WORKDIR /sbt
+RUN sbt assembly
+
+FROM gcr.io/spark-operator/spark:v3.0.0
+
+WORKDIR /opt/spark/jars
+COPY --from=maven_builder maven/target/dependency/ .
+COPY --from=sbt_builder sbt/target/scala-2.12/streamprocessor-assembly-1.0.jar .
+
+USER root

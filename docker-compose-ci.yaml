@@ -2,24 +2,16 @@ version: "3.6"
 
 services:
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:6.2.0
-    container_name: zookeeper
-    
   kafka:
     build:
       context: ./kafka
       dockerfile: Dockerfile
     container_name: kafka
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop:3.27.0
-    container_name: kafdrop
-
   spark-k8s:
     build:
       context: ./StreamProcessor
-      dockerfile: Dockerfile.k8s
+      dockerfile: Dockerfile
     container_name: spark-k8s
 
   cassandra:

@@ -26,5 +26,6 @@ provider "helm" {
   }
 }
 
-provider "kubectl" {
-}
+#this one is used to deploy SparkApplication properly
+provider "kubectl" {}
+

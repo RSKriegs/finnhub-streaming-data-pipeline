@@ -1,5 +1,6 @@
 #Main file for Finnhub API & Kafka integration
 import os
+import ast
 import json
 import websocket
 from utils.functions import *
@@ -14,9 +15,9 @@ class FinnhubProducer:
             print(f'{k}={v}')
 
         self.finnhub_client = load_client(os.environ['FINNHUB_API_TOKEN'])
-        self.producer = load_producer(f"{os.environ['KAFKA_SERVER']}:{os.environ['KAFKA_PORT']}") #change into ['KAFKA_SERVER'] for docker/docker-compose
+        self.producer = load_producer(f"{os.environ['KAFKA_SERVER']}:{os.environ['KAFKA_PORT']}")
         self.avro_schema = load_avro_schema('src/schemas/trades.avsc')
-        self.tickers = os.environ['FINNHUB_STOCKS_TICKERS'].split(",")
+        self.tickers = ast.literal_eval(os.environ['FINNHUB_STOCKS_TICKERS'])
         self.validate = os.environ['FINNHUB_VALIDATE_TICKERS']
 
         websocket.enableTrace(True)

@@ -1,10 +1,14 @@
 resource "kubectl_manifest" "streamprocessor" {
-    yaml_body = <<YAML
+  depends_on = [
+      "kubernetes_deployment.kafka_service",
+      "kubernetes_deployment.cassandra"
+  ]
+  yaml_body = <<YAML
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
   name: streamprocessor
-  namespace: default
+  namespace: ${var.namespace}
 spec:
   type: Scala
   mode: cluster
@@ -23,9 +27,21 @@ spec:
     cores: 1
     memory: "512m"
     serviceAccount: spark
+    javaOptions: "-Dconfig.resource=deployment.conf"
+    envFrom:
+    - configMapRef:
+        name: pipeline-config
+    - secretRef:
+        name: pipeline-secrets
   executor:
     cores: 1
     instances: 1
     memory: "2g"
+    javaOptions: "-Dconfig.resource=deployment.conf"
+    envFrom:
+    - configMapRef:
+        name: pipeline-config
+    - secretRef:
+        name: pipeline-secrets
 YAML
 }

@@ -1,39 +1,31 @@
 resource "kubernetes_deployment" "grafana" {
   metadata {
     name = "grafana"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "grafana"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "grafana"
     }
   }
+
+  depends_on = [
+        "kubernetes_deployment.cassandra"
+  ]
 
   spec {
     replicas = 1
 
     selector {
       match_labels = {
-        "io.kompose.service" = "grafana"
+        "k8s.service" = "grafana"
       }
     }
 
     template {
       metadata {
         labels = {
-          "io.kompose.network/pipeline-network" = "true"
+          "k8s.network/pipeline-network" = "true"
 
-          "io.kompose.service" = "grafana"
-        }
-
-        annotations = {
-          "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-          "kompose.version" = "1.27.0 (b0ed6a2c9)"
+          "k8s.service" = "grafana"
         }
       }
 
@@ -68,30 +60,27 @@ resource "kubernetes_deployment" "grafana" {
 resource "kubernetes_service" "grafana" {
   metadata {
     name = "grafana"
-
+    namespace = "${var.namespace}"
     labels = {
-      "io.kompose.service" = "grafana"
-    }
-
-    annotations = {
-      "kompose.cmd" = "C:\\ProgramData\\chocolatey\\lib\\kubernetes-kompose\\tools\\kompose.exe convert"
-
-      "kompose.version" = "1.27.0 (b0ed6a2c9)"
+      "k8s.service" = "grafana"
     }
   }
+
+  depends_on = [
+        "kubernetes_deployment.grafana"
+  ]
 
   spec {
     port {
       name        = "3000"
       port        = 3000
       target_port = "3000"
-      node_port   = 30001
     }
 
     selector = {
-      "io.kompose.service" = "grafana"
+      "k8s.service" = "grafana"
     }
 
-    type = "NodePort"
+    cluster_ip = "None"
   }
 }

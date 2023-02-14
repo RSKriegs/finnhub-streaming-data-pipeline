@@ -1,3 +1,5 @@
+//TODO: verify environment variables issue
+
 import com.typesafe.config.Config
 
 class Settings(config: Config) extends Serializable {
@@ -15,8 +17,7 @@ class Settings(config: Config) extends Serializable {
 
   var kafka: Map[String, String] = {
     Map(
-      "server_address" -> config.getString("kafka.server_address"),
-      "server_k8s_address" -> config.getString("kafka.server_k8s_address"),
+      "server_address" -> s"${config.getString("kafka.server")}:${config.getString("kafka.port")}",
       "topic_market" -> config.getString("kafka.topics.market"),
       "min_partitions" -> config.getString("kafka.min_partitions.StreamProcessor")
     )
