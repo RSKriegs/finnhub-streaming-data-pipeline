@@ -23,7 +23,7 @@ All applications are containerized into **Docker** containers, which are orchest
 
 ## Dashboard
 
-[Untitled video - Made with Clipchamp](https://user-images.githubusercontent.com/75480707/219045469-dd9660cc-1698-4cb8-af27-2ca45b393c46.gif)
+![Untitled video - Made with Clipchamp](https://user-images.githubusercontent.com/75480707/219045469-dd9660cc-1698-4cb8-af27-2ca45b393c46.gif)
 
 ## Setup & deployment
 
