@@ -30,6 +30,7 @@ You can access Grafana with a dashboard on localhost:3000 by running following c
 kubectl port-forward -n pipeline service/grafana 3000:3000
 ```
 You can also modify it for your liking from UI - but if you want to save anything, you will need to export json and load it into Docker image.
+Remember that if you change namespace name in Terraform variables you need to apply it into that command as well.
 
 ## Setup & deployment
 
