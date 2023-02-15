@@ -7,7 +7,7 @@ It is designed with a purpose to showcase key aspects of streaming pipeline deve
 
 ![finnhub_streaming_data_pipeline_diagram drawio (4)](https://user-images.githubusercontent.com/75480707/218998119-12d514ef-8e10-40e7-a638-afaa728e6b4f.png)
 
-The diagram below provides a detailed insight into pipeline's architecture. 
+The diagram above provides a detailed insight into pipeline's architecture. 
 
 All applications are containerized into **Docker** containers, which are orchestrated by **Kubernetes** - and its infrastructure is managed by **Terraform**.
 
