@@ -23,7 +23,7 @@ All applications are containerized into **Docker** containers, which are orchest
 
 ## Dashboard
 
-![Untitled video - Made with Clipchamp](https://user-images.githubusercontent.com/75480707/219045469-dd9660cc-1698-4cb8-af27-2ca45b393c46.gif)
+![Untitled video - Made with Clipchamp (1)](https://user-images.githubusercontent.com/75480707/219052738-c0e6d61f-a1f7-4317-9bfe-104b93b709b8.gif)
 
 You can access Grafana with a dashboard on localhost:3000 by running following command:
 ```
