@@ -73,6 +73,10 @@ The current CI_build.yml file for Github Actions is a remnant of old docker-comp
 
 Although I have used Grafana for final visualization layer, I would look forward to spend more time implementing other solution as Grafana, especially while using external plugin, has limited capabilities for data analytics. Personally I would recommend to go with open-source BI solution, such as Apache Superset, and spin Cassandra into Presto engine, or develop custom Streamlit app.
 
+- Grafana network stability
+
+On local deployment, while exposing Grafana service, it might be a little unstable sometimes depending on the workload & resources of Kubernetes cluster but also on the local machine.
+
 - Kafdrop fix
 
 Despite being included in final deployment, I have run into issues with exposing Kafdrop. It simply began to not work at some point of development stage of Kubernetes deployment. A deep dive into that issue is required.
