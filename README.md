@@ -28,11 +28,34 @@ TODO
 
 ## Setup & deployment
 
-TODO
-Minikube, Docker Desktop & Terraform.
-- describe what to do
-- include Powershell commands
-- mention docker-compose-old branch
+The application is designed to be deployed on a local Minikube cluster. However, the deployment into EKS/GKE/AKS should be quite straight-forward, with tweaking deployment settings for providers, volumes etc.
+
+Running the application requires you to have a Finnhub API token. You can retrieve it once you have created a Finnhub account. To include it in final deployment, insert it into proper fields in terraform-k8s/config.tf, along with Cassandra database username & password of choice.
+
+There is also an old setup that relies solely on docker-compose. To reach that, navigate to the docker-compose-old branch.
+
+I was running this cluster on Windows with Minikube, Docker Desktop and Terraform pre-installed. I have utilized local Docker registry to apply custom images into deployment. I was launching it with no vtx enabled, using VirtualBox as VM engine. Below attached are scripts that I was running in Powershell in order to run the cluster as intended:
+
+```
+set HTTP_PROXY=http://<proxy hostname:port>
+set HTTPS_PROXY=https://<proxy hostname:port>
+set NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24
+
+minikube start --no-vtx-check --memory 8192 --cpus 4
+
+minikube docker-env
+set DOCKER_TLS_VERIFY=”1"
+set DOCKER_HOST=”tcp://172.17.0.2:2376"
+set DOCKER_CERT_PATH=”/home/user/.minikube/certs”
+set MINIKUBE_ACTIVE_DOCKERD=”minikube”
+
+minikube docker-env | Invoke-Expression
+
+docker-compose -f docker-compose-ci.yaml build --no-cache
+
+cd terraform-k8s
+terraform apply
+```
 
 ## Potential improvements
 
