@@ -44,7 +44,7 @@ The pipeline was developed locally on Minikube, but deploying it into one of Kub
 
 - Developing CI/CD pipeline
 
-The current CI_build.yml file is a remnant of old docker-compose version and setting up CI for Kubernetes & Terraform, along with pipeline testing, would require much more work, which was not necessary for me as I was developing everything locally. However, it would be essential to implement that on a larger scale deployment, along with adding CD for cloud deployment.
+The current CI_build.yml file is a remnant of old docker-compose version and setting up CI for Kubernetes & Terraform, along with pipeline testing, would require much more work, which was not necessary for me as I was developing & testing everything locally. However, it would be essential to implement that on a larger scale deployment, along with adding CD for cloud deployment.
 
 - Visualization tool
 
