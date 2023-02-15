@@ -24,11 +24,26 @@ All applications are containerized into **Docker** containers, which are orchest
 ## Dashboard
 
 TODO
+- insert gif with dashboard
 
 ## Setup & deployment
 
 TODO
+Minikube, Docker Desktop & Terraform.
+- describe what to do
+- include Powershell commands
 
-## Room for improvements
+## Potential improvements
 
 TODO
+- Cloud deployment
+- Developing CI/CD pipeline
+- Kafdrop fix
+- Cassandra initial startup fix
+- Deploying Cassandra & Kafka as StatefulSets
+- adding Cassandra Web UI as ambassador
+- add persistent volume for Kafka
+- code cleanup
+- verifying environment parametrization
+- Scala packages
+- further development
