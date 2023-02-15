@@ -25,6 +25,12 @@ All applications are containerized into **Docker** containers, which are orchest
 
 ![Untitled video - Made with Clipchamp](https://user-images.githubusercontent.com/75480707/219045469-dd9660cc-1698-4cb8-af27-2ca45b393c46.gif)
 
+You can access Grafana with a dashboard on localhost:3000 by running following command:
+```
+kubectl port-forward -n pipeline service/grafana 3000:3000
+```
+You can also modify it for your liking from UI - but if you want to save anything, you will need to export json and load it into Docker image.
+
 ## Setup & deployment
 
 The application is designed to be deployed on a local Minikube cluster. However, the deployment into EKS/GKE/AKS should be quite straight-forward, with tweaking deployment settings for providers, volumes etc.
@@ -95,6 +101,10 @@ Adding some sort of Cassandra Web UI as a sidebar ambassador container to Cassan
 - add persistent volume for Kafka
 
 Adding persistent volumes at message broker stage would add some fail-safe storage and relability to the system. In case of system failure, the raw data could be retrieved later for transformation.
+
+- volumeMounts instead of Dockerfiles
+
+For some features, for example Grafana dashboards or Kafka setup script, volumeMounts would be more convenient rather than copying content into Docker image.
 
 - verifying environment parametrization & Kubernetes configuration
 
