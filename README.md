@@ -9,4 +9,16 @@ The pipeline bases on Apache Spark, Apache Kafka & Kubernetes as key tools utili
 ![finnhub_streaming_data_pipeline_diagram drawio (4)](https://user-images.githubusercontent.com/75480707/218998119-12d514ef-8e10-40e7-a638-afaa728e6b4f.png)
 
 The diagram below provides a detailed insight into pipeline's architecture.
+TODO
 
+## Dashboard
+
+TODO
+
+## Setup & deployment
+
+TODO
+
+## Room for improvements
+
+TODO
