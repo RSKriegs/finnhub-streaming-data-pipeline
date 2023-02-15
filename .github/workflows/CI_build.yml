@@ -15,7 +15,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: setup-minikube
+      uses: medyagh/setup-minikube@v0.0.11
+      with:
+          driver: docker
+          container-runtime: docker
+          cpus: 4
+          memory: 8192
     - name: Setup docker compose
       uses: yu-ichiro/spin-up-docker-compose-action@v1
       with:
           file: docker-compose-ci.yaml
+    - name: terraform-apply
+      uses: dflook/terraform-apply@v1.29.1
+      with:
+          path: terraform-k8s
+          auto-approve: true
+
