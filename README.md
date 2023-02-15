@@ -32,6 +32,7 @@ TODO
 Minikube, Docker Desktop & Terraform.
 - describe what to do
 - include Powershell commands
+- mention docker-compose-old branch
 
 ## Potential improvements
 
