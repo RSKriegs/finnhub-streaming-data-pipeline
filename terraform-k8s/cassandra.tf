@@ -51,7 +51,7 @@ resource "kubernetes_persistent_volume_claim" "cassandra-db-volume" {
   }
 }
 
-resource "kubernetes_stateful_set" "cassandra" {
+resource "kubernetes_deployment" "cassandra" {
   metadata {
     name = "cassandra"
     namespace = "${var.namespace}"
