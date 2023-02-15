@@ -1,4 +1,3 @@
-#TODO: verify if persistent volumes work 100% as intended
 #Optional TO DO: verify all Cassandra parameters in env
 #Optional TO DO: attach Cassandra web UI as ambassador
 #Optional TO DO: deploy Cassandra as StatefulSet
@@ -51,7 +50,7 @@ resource "kubernetes_persistent_volume_claim" "cassandra-db-volume" {
   }
 }
 
-resource "kubernetes_stateful_set" "cassandra" {
+resource "kubernetes_deployment" "cassandra" {
   metadata {
     name = "cassandra"
     namespace = "${var.namespace}"
