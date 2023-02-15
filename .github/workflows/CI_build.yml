@@ -21,7 +21,7 @@ jobs:
           driver: docker
           container-runtime: docker
           cpus: 2
-          memory: 8192
+          memory: 4096
     - name: Setup docker compose
       uses: yu-ichiro/spin-up-docker-compose-action@v1
       with:
