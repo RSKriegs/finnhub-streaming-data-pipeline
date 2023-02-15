@@ -104,7 +104,7 @@ Adding persistent volumes at message broker stage would add some fail-safe stora
 
 - volumeMounts instead of Dockerfiles
 
-For some features, for example Grafana dashboards or Kafka setup script, volumeMounts would be more convenient rather than copying content into Docker image.
+For some features, for example Grafana dashboards or Kafka setup script, volumeMounts would be more convenient rather than copying content into Docker image, as it wouldn't enforce rebuilding it.
 
 - verifying environment parametrization & Kubernetes configuration
 
