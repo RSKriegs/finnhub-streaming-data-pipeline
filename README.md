@@ -81,7 +81,7 @@ Although I have used Grafana for final visualization layer, I would look forward
 
 - Grafana network stability
 
-On local deployment, while exposing Grafana service, it might be a little unstable sometimes depending on the workload & resources of Kubernetes cluster but also on the local machine.
+On local deployment, while exposing Grafana service, it might be unstable depending on the workload & resources of Kubernetes cluster but also on the local machine.
 
 - Kafdrop fix
 
