@@ -19,8 +19,4 @@ jobs:
       uses: yu-ichiro/spin-up-docker-compose-action@v1
       with:
           file: docker-compose-ci.yaml
-    - name: terraform-plan
-      uses: dflook/terraform-plan@v1.29.1
-      with:
-          path: terraform-k8s
 
