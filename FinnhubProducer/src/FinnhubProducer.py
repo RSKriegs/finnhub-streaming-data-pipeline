@@ -49,12 +49,12 @@ class FinnhubProducer:
         for ticker in self.tickers:
             if self.validate=="1":
                 if(ticker_validator(self.finnhub_client,ticker)==True):
-                    self.ws.send('{"type":"subscribe","symbol":"'+ticker+'"}')
+                    self.ws.send(f'{"type":"subscribe","symbol":"{ticker}"}')
                     print(f'Subscription for {ticker} succeeded')
                 else:
                     print(f'Subscription for {ticker} failed - ticker not found')
             else:
-                self.ws.send('{"type":"subscribe","symbol":"'+ticker+'"}')
+                self.ws.send(f'{"type":"subscribe","symbol":"{ticker}"}')
 
 if __name__ == "__main__":
     FinnhubProducer()

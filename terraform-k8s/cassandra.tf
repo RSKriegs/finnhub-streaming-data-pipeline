@@ -1,54 +1,6 @@
-#Optional TO DO: verify all Cassandra parameters in env
 #Optional TO DO: attach Cassandra web UI as ambassador
 #Optional TO DO: deploy Cassandra as StatefulSet
 #Optional TO DO: configure health checks & readiness/liveness probes
-
-resource "kubernetes_persistent_volume" "cassandra-db-volume" {
-  metadata {
-    name = "cassandra-db-volume"
-  }
-  depends_on = [
-        "kubernetes_namespace.pipeline-namespace"
-  ]
-  spec {
-    capacity = {
-      storage = "1Gi"
-    }
-    access_modes = ["ReadWriteMany"]
-    storage_class_name = "hostpath"
-    persistent_volume_reclaim_policy = "Retain"
-    persistent_volume_source {
-      host_path {
-        path = "/var/lib/minikube/pv0001/"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "cassandra-db-volume" {
-  metadata {
-    name = "cassandra-db-volume"
-    namespace = "${var.namespace}"
-    labels = {
-      "k8s.service" = "cassandra-db-volume"
-    }
-  }
-
-  depends_on = [
-        "kubernetes_namespace.pipeline-namespace"
-  ]
-
-  spec {
-    access_modes = ["ReadWriteMany"]
-    storage_class_name = "hostpath"
-
-    resources {
-      requests = {
-        storage = "1Gi"
-      }
-    }
-  }
-}
 
 resource "kubernetes_deployment" "cassandra" {
   metadata {

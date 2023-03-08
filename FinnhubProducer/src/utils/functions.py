@@ -5,12 +5,6 @@ import avro.schema
 import avro.io
 from kafka import KafkaProducer
 
-#setting up Finnhub settings
-def load_config(config_file):
-    with open(config_file, 'r') as f:
-        config = json.load(f)
-    return config
-
 #setting up Finnhub client connection to test if tickers specified in config exist
 def load_client(token):
     return finnhub.Client(api_key=token)

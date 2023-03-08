@@ -1,6 +1,4 @@
-#Optional TO DO: Kafdrop seems to have broken down - fails while being exposed. Fix it
-#Optional TO DO: verify all Kafka parameters in env
-#Optional TO DO: add persistent volume & persistent volume claim for Kafka broker
+#Optional TO DO: deploy Kafka as StatefulSet
 #Optional TO DO: configure health checks, liveness/readiness probes
 
 resource "kubernetes_deployment" "zookeeper" {
@@ -92,6 +90,14 @@ resource "kubernetes_deployment" "kafka_service" {
       }
 
       spec {
+        volume {
+          name = "kafka-volume"
+
+          persistent_volume_claim {
+            claim_name = "kafka-volume"
+          }
+        }
+
         container {
           name  = "kafka-service"
           image = "finnhub-streaming-data-pipeline-kafka:latest"
@@ -170,6 +176,11 @@ resource "kubernetes_deployment" "kafka_service" {
                 command = ["/bin/sh", "-c", "/kafka-setup-k8s.sh"]
               }
             }
+          }
+
+          volume_mount {
+            name       = "kafka-volume"
+            mount_path = "/var/data"
           }
 
           image_pull_policy = "Never"

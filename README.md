@@ -40,7 +40,7 @@ Running the application requires you to have a Finnhub API token. You can retrie
 
 There is also an old setup that relies solely on docker-compose. To reach that, navigate to the docker-compose-old branch.
 
-I was running this cluster on Windows with Minikube, Docker Desktop and Terraform pre-installed. I have utilized local Docker registry to apply custom images into deployment. I was launching it with no vtx enabled, using VirtualBox as VM engine. Below attached are scripts that I was running in Powershell in order to run the cluster as intended:
+I was running this cluster on Windows with Minikube, Helm, Docker Desktop and Terraform pre-installed. I have utilized local Docker registry to apply custom images into deployment. I was launching it with no vtx enabled, using VirtualBox as VM engine. Below attached are scripts that I was running in Powershell in order to run the cluster as intended:
 
 ```
 set HTTP_PROXY=http://<proxy hostname:port>
@@ -82,10 +82,6 @@ Although I have used Grafana for final visualization layer, I would look forward
 - Grafana network stability
 
 On local deployment, while exposing Grafana service, it might be unstable and have some latency depending on the workload & resources of Kubernetes cluster but also on the local machine.
-
-- Kafdrop fix
-
-Despite being included in final deployment, I have run into issues with exposing Kafdrop. It simply began to not work at some point of development stage of Kubernetes deployment. A deep dive into that issue is required.
 
 - Cassandra initial startup fix
 

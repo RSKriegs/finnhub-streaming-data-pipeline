@@ -23,10 +23,17 @@ spec:
     onFailureRetryInterval: 10
     onSubmissionFailureRetries: 3
     onSubmissionFailureRetryInterval: 10
+  volumes:
+  - name: spark-volume
+    persistentVolumeClaim:
+      claimName: spark-volume
   driver:
     cores: 1
     memory: "512m"
     serviceAccount: spark
+    volumeMounts:
+      - name: spark-volume
+        mountPath: /data
     javaOptions: "-Dconfig.resource=deployment.conf"
     envFrom:
     - configMapRef:
@@ -37,6 +44,9 @@ spec:
     cores: 1
     instances: 1
     memory: "2g"
+    volumeMounts:
+      - name: spark-volume
+        mountPath: /data
     javaOptions: "-Dconfig.resource=deployment.conf"
     envFrom:
     - configMapRef:

@@ -55,12 +55,12 @@ object StreamProcessor {
             .option("useDeprecatedOffsetFetching",settings.spark("deprecated_offsets"))
             .load()
 
-        // explode the data from JSON
+        // explode the data from Avro
         val expandedDF = inputDF
             .withColumn("avroData",from_avro(col("value"),tradesSchema))
             .select($"avroData.*")
             .select(explode($"data"),$"type")
-            .select($"col.*",$"type")
+            .select($"col.*")
 
         // rename columns and add proper timestamps
          val finalDF = expandedDF
@@ -83,7 +83,6 @@ object StreamProcessor {
                     .mode("append")
                     .save()
             }
-            // .format("console") //keeping this line commented for potential swift debugging
             .outputMode("update")
             .start()
 
@@ -111,7 +110,6 @@ object StreamProcessor {
                     .mode("append")
                     .save()
             }
-            // .format("console") //keeping this line commented for potential swift debugging
             .outputMode("update")
             .start()
         

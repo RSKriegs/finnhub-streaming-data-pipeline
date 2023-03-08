@@ -14,8 +14,7 @@
           "type":[
             {
                "type":"array",
-               "items":["null","string"
-               ],
+               "items":["null","string"],
                "default":[]
             },
             "null"
