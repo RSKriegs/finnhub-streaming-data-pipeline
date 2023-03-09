@@ -47,7 +47,7 @@ set HTTP_PROXY=http://<proxy hostname:port>
 set HTTPS_PROXY=https://<proxy hostname:port>
 set NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24
 
-minikube start --no-vtx-check --memory 8192 --cpus 4
+minikube start --no-vtx-check --memory 10240 --cpus 6
 
 minikube docker-env
 set DOCKER_TLS_VERIFY=”1"
@@ -78,10 +78,6 @@ The current CI_build.yml file for Github Actions is a remnant of old docker-comp
 - Visualization tool
 
 Although I have used Grafana for final visualization layer, I would look forward to spend more time implementing other solution as Grafana, especially while using external plugin, has limited capabilities for data analytics. Personally I would recommend to go with open-source BI solution, such as Apache Superset, and spin Cassandra into Presto engine, or develop custom Streamlit app.
-
-- Grafana network stability
-
-On local deployment, while exposing Grafana service, it might be unstable and have some latency depending on the workload & resources of Kubernetes cluster but also on the local machine.
 
 - Cassandra initial startup fix
 
