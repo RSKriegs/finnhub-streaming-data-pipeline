@@ -95,18 +95,10 @@ Right now, Cassandra & Kafka are configured to be standard deployments. However,
 
 Adding some sort of Cassandra Web UI as a sidebar ambassador container to Cassandra deployment would be helpful for operations & log analytics.
 
-- add persistent volume for Kafka
-
-Adding persistent volumes at message broker stage would add some fail-safe storage and relability to the system. In case of system failure, the raw data could be retrieved later for transformation.
-
 - volumeMounts instead of Dockerfiles
 
 For some features, for example Grafana dashboards or Kafka setup script, volumeMounts would be more convenient rather than copying content into Docker image, as it wouldn't enforce rebuilding it.
 
-- verifying environment parametrization & Kubernetes configuration
-
-Some Kafka/Spark/Cassandra parameters might be unnecessary or even suboptimal pipeline, but also some other parameters might be added in order to improve performance & reliability. Adding more environment variables into configMap, or Terraform variables might also improve code readability. There are also some more existing & potential features to Kubernetes deployments to be analyzed.
-
 - code cleanup & further development
 
-There is room to develop more advanced codebase into a project, for example to implement Lambda architecture & batch processing for some use cases. Some code for applications might also be cleaned up and/or optimized (for example for build.sbt).
+There is room to develop more advanced codebase into a project, for example to implement Lambda architecture & batch processing for some use cases, or improve Kubernetes deployment configuration. Some code for applications might also be cleaned up and/or optimized (for example for build.sbt).
