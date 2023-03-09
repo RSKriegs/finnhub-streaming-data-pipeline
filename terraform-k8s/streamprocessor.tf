@@ -24,16 +24,16 @@ spec:
     onSubmissionFailureRetries: 3
     onSubmissionFailureRetryInterval: 10
   volumes:
-  - name: spark-volume
-    persistentVolumeClaim:
-      claimName: spark-volume
+    - name: spark-volume
+      hostPath:
+        path: /host
   driver:
-    cores: 1
-    memory: "512m"
+    cores: 2
+    memory: "1g"
     serviceAccount: spark
     volumeMounts:
       - name: spark-volume
-        mountPath: /data
+        mountPath: /host
     javaOptions: "-Dconfig.resource=deployment.conf"
     envFrom:
     - configMapRef:
@@ -41,12 +41,12 @@ spec:
     - secretRef:
         name: pipeline-secrets
   executor:
-    cores: 1
+    cores: 2
     instances: 1
     memory: "2g"
     volumeMounts:
       - name: spark-volume
-        mountPath: /data
+        mountPath: /host
     javaOptions: "-Dconfig.resource=deployment.conf"
     envFrom:
     - configMapRef:

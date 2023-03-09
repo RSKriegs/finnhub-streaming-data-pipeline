@@ -9,7 +9,7 @@ resource "kubernetes_deployment" "finnhubproducer" {
 
   depends_on = [
       "kubernetes_deployment.kafka_service",
-      "kubernetes_deployment.cassandra",
+      "kubernetes_deployment.cassandra"
   ]
 
   spec {

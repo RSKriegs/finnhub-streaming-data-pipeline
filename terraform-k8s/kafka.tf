@@ -68,7 +68,9 @@ resource "kubernetes_deployment" "kafka_service" {
   }
 
   depends_on = [
-        "kubernetes_deployment.zookeeper"
+        "kubernetes_deployment.zookeeper",
+        "kubernetes_persistent_volume_claim.kafka-volume",
+        "kubernetes_persistent_volume.kafka-volume"
   ]
 
   spec {

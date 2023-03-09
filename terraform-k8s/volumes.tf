@@ -50,7 +50,9 @@ resource "kubernetes_persistent_volume" "kafka-volume" {
     name = "kafka-volume"
   }
   depends_on = [
-        "kubernetes_namespace.pipeline-namespace"
+        "kubernetes_namespace.pipeline-namespace",
+        "kubernetes_persistent_volume_claim.cassandra-db-volume",
+        "kubernetes_persistent_volume.cassandra-db-volume"
   ]
   spec {
     capacity = {
@@ -77,54 +79,9 @@ resource "kubernetes_persistent_volume_claim" "kafka-volume" {
   }
 
   depends_on = [
-        "kubernetes_namespace.pipeline-namespace"
-  ]
-
-  spec {
-    access_modes = ["ReadWriteMany"]
-    storage_class_name = "hostpath"
-
-    resources {
-      requests = {
-        storage = "1Gi"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume" "spark-volume" {
-  metadata {
-    name = "spark-volume"
-  }
-  depends_on = [
-        "kubernetes_namespace.pipeline-namespace"
-  ]
-  spec {
-    capacity = {
-      storage = "1Gi"
-    }
-    access_modes = ["ReadWriteMany"]
-    storage_class_name = "hostpath"
-    persistent_volume_reclaim_policy = "Retain"
-    persistent_volume_source {
-      host_path {
-        path = "/var/lib/minikube/pv0003/"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "spark-volume" {
-  metadata {
-    name = "spark-volume"
-    namespace = "${var.namespace}"
-    labels = {
-      "k8s.service" = "spark-volume"
-    }
-  }
-
-  depends_on = [
-        "kubernetes_namespace.pipeline-namespace"
+        "kubernetes_namespace.pipeline-namespace",
+        "kubernetes_persistent_volume_claim.cassandra-db-volume",
+        "kubernetes_persistent_volume.cassandra-db-volume"
   ]
 
   spec {

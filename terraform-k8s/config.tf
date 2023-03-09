@@ -28,7 +28,7 @@ resource "kubernetes_config_map" "pipeline-config" {
     KAFKA_MIN_PARTITIONS          = "1"
     
     SPARK_MASTER                  = "spark://spark-master:7077"
-    SPARK_MAX_OFFSETS_PER_TRIGGER = "1000"
+    SPARK_MAX_OFFSETS_PER_TRIGGER = "100"
     SPARK_SHUFFLE_PARTITIONS      = "2"
     SPARK_DEPRECATED_OFFSETS      = "False"
   }
