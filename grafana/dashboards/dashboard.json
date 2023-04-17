@@ -315,7 +315,7 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "500ms"
+      "1000ms"
     ]
   },
   "timezone": "",
