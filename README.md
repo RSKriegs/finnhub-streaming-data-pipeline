@@ -69,6 +69,10 @@ terraform apply
 
 There is definitely some room for improvement for the pipeline. The solution itself has some issues at the moment and there are some ideas that would enable its full potential in production:
 
+- November 2023 update: failing CI/inaccessible SparkOperator
+
+It seems that the version of Google's SparkOperator I've used is inacessible as for November 2023. This is also the reason why CI is failing to build. I would try to address that in a spare time and most likely change the image.
+
 - Cloud deployment
 
 The pipeline was developed locally on Minikube, but deploying it into one of Kubernetes services of major cloud vendors would massively improve its scalability & reliability. This would be a must-have in real-life commercialized deployment.
