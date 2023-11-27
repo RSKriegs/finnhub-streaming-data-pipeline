@@ -1,3 +1,5 @@
+The related master's thesis is shared on Google Drive here:  https://drive.google.com/file/d/17BBSlaHi5MKmo0qygaceogeOweqCWx9n/view?usp=drivesdk
+---
 # Finnhub Streaming Data Pipeline
 
 The project is a streaming data pipeline based on Finnhub.io API/websocket real-time trading data created for a sake of my master's thesis related to stream processing.
