@@ -69,9 +69,9 @@ terraform apply
 
 There is definitely some room for improvement for the pipeline. The solution itself has some issues at the moment and there are some ideas that would enable its full potential in production:
 
-- November 2023 update: failing CI/inaccessible SparkOperator
+- November 2023 update: deleted SparkOperator image
 
-It seems that the version of Google's SparkOperator I've used is inacessible as for November 2023. This is also the reason why CI is failing to build. I would try to address that in a spare time and most likely change the image.
+It seems that the SparkOperator image from Google Container Registry is deleted, therefore the pipeline will fail to build. If you would like to run the pipeline on your own, you will need to replace the Spark image first and possibly alter some configuration settings.
 
 - Cloud deployment
 
